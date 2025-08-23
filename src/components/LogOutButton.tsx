@@ -23,7 +23,7 @@ export default function LogOutButton() {
                 description: "You've been successfully logged out",
                 position: "top-center"
             });
-            router.push("/");
+            router.push("/login");
         } else {
             toast.error("Error", {
                 description: errorMessage,
