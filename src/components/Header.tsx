@@ -5,10 +5,11 @@ import {shadow} from "@/styles/utils";
 import {Button} from "@/components/ui/button";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import LogOutButton from "@/components/LogOutButton";
+import {getUser} from "@/auth/server";
 
-export default function Header() {
+export default async function Header() {
 
-    const user = 1;
+    const user = await getUser();
 
     return <header className="relative w-full flex h-24 items-center justify-between bg-popover px-3 sm:px-8" style={{
         boxShadow: shadow
