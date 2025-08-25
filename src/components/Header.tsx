@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import LogOutButton from "@/components/LogOutButton";
 import {getUser} from "@/auth/server";
+import {SidebarTrigger} from "@/components/ui/sidebar";
 
 export default async function Header() {
 
@@ -14,6 +15,7 @@ export default async function Header() {
     return <header className="relative w-full flex h-24 items-center justify-between bg-popover px-3 sm:px-8" style={{
         boxShadow: shadow
     }}>
+        <SidebarTrigger className="absolute left-1 top-1" />
         <Link className="flex items-end gap-2" href="/">
             <Image src="/ForteNotesLOGO.png" alt="Forte Notes" height={60} width={60} className="rounded" priority/>
             <h1 className="flex flex-col pb-1 text-2xl font-semibold leading-6">Forte <span>Notes</span></h1>

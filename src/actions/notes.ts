@@ -24,18 +24,38 @@ export const updateNoteAction = async (noteId: string, text: string) => {
     }
 }
 
-export const createNoteAction = async (uuid: string) => {
+export const createNoteAction = async (noteId: string) => {
     try {
         const user = await getUser();
         if (!user) throw new Error("You must be logged in to update a note");
 
         await prisma.note.create({
             data: {
-                id: uuid,
+                id: noteId,
                 text: "",
                 authorId: user.id
             }
         });
+
+        return {errorMessage: null}
+
+    } catch (error) {
+        return handleError(error);
+    }
+}
+
+export const deleteNoteAction = async (noteId: string) => {
+    try {
+        const user = await getUser();
+        if (!user) throw new Error("You must be logged in to update a note");
+
+        await prisma.note.delete({
+            where: {
+              id: noteId, authorId: user.id
+            }
+        });
+
+        return {errorMessage: null}
 
     } catch (error) {
         return handleError(error);
