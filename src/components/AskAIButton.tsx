@@ -2,7 +2,7 @@
 
 import React, {useRef, useState, useTransition} from "react";
 import {User} from "@supabase/supabase-js";
-import {Button} from "@/components/ui/button"
+import {Button} from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -10,7 +10,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {useRouter} from "next/navigation";
 import {Textarea} from "@/components/ui/textarea";
 import {ArrowUpIcon} from "lucide-react";
@@ -134,6 +134,5 @@ export default function AskAIButton(props: AskAIButtonProps) {
                 </div>
             </DialogContent>
         </Dialog>
-
     );
 };
