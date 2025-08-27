@@ -14,7 +14,7 @@ import SidebarGroupContent from "@/components/SidebarGroupContent";
 
 export default async function AppSidebar() {
 
-    let user = await getUser();
+    const user = await getUser();
     let notes: Note[] = [];
 
     if (user) {

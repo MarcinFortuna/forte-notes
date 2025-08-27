@@ -8,7 +8,7 @@ import {Button} from "@/components/ui/button"
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
 
 export default function DarkModeToggle() {
-    const {setTheme, theme} = useTheme()
+    const {setTheme} = useTheme()
 
     return (
         <DropdownMenu>
@@ -33,5 +33,5 @@ export default function DarkModeToggle() {
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
-    )
+    );
 }
