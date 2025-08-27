@@ -15,6 +15,7 @@ import {useRouter} from "next/navigation";
 import {Textarea} from "@/components/ui/textarea";
 import {ArrowUpIcon} from "lucide-react";
 import {askAIAboutNotesAction} from "@/actions/notes";
+import "@/styles/ai-response.css";
 
 interface AskAIButtonProps {
     user: User | null;
@@ -127,7 +128,7 @@ export default function AskAIButton(props: AskAIButtonProps) {
                               value={questionText}
                               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setQuestionText(e.target.value)}
                     />
-                    <Button className="ml-auto size-8 rounded-full">
+                    <Button className="ml-auto size-8 rounded-full cursor-pointer mt-2" onClick={handleSubmit}>
                         <ArrowUpIcon className="text-background"/>
                     </Button>
                 </div>
