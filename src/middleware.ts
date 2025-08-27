@@ -22,47 +22,70 @@ export const config = {
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
         request,
-    })
+    });
 
-    console.log("middleware ran");
+    const supabase = createServerClient(
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll() {
+                    return request.cookies.getAll()
+                },
+                setAll(cookiesToSet) {
+                    cookiesToSet.forEach(({name, value}) => request.cookies.set(name, value))
+                    supabaseResponse = NextResponse.next({
+                        request,
+                    })
+                    cookiesToSet.forEach(({name, value, options}) =>
+                        supabaseResponse.cookies.set(name, value, options)
+                    )
+                },
+            },
+        }
+    );
 
-    // const supabase = createServerClient(
-    //     process.env.SUPABASE_URL!,
-    //     process.env.SUPABASE_PUBLISHABLE_KEY!,
-    //     {
-    //         cookies: {
-    //             getAll() {
-    //                 return request.cookies.getAll()
-    //             },
-    //             setAll(cookiesToSet) {
-    //                 cookiesToSet.forEach(({name, value}) => request.cookies.set(name, value))
-    //                 supabaseResponse = NextResponse.next({
-    //                     request,
-    //                 })
-    //                 cookiesToSet.forEach(({name, value, options}) =>
-    //                     supabaseResponse.cookies.set(name, value, options)
-    //                 )
-    //             },
-    //         },
-    //     }
-    // )
+    const isAuthRoute: boolean = ["/login", "/sign-up"].includes(request.nextUrl.pathname);
 
+    if (isAuthRoute) {
+        const {
+            data: {user},
+        } = await supabase.auth.getUser();
+        if (user) {
+            return NextResponse.redirect(new URL("/", process.env.NEXT_PUBLIC_BASE_URL));
+        }
+    }
 
-    // const {
-    //     data: {user},
-    // } = await supabase.auth.getUser()
+    const {searchParams, pathname} = new URL(request.url);
 
-    // if (
-    //     !user &&
-    //     !request.nextUrl.pathname.startsWith('/login') &&
-    //     !request.nextUrl.pathname.startsWith('/auth') &&
-    //     !request.nextUrl.pathname.startsWith('/error')
-    // ) {
-    //     // no user, potentially respond by redirecting the user to the login page
-    //     const url = request.nextUrl.clone()
-    //     url.pathname = '/login'
-    //     return NextResponse.redirect(url)
-    // }
+    if (!searchParams.get("noteId") && pathname === "/") {
+        const {
+            data: {user},
+        } = await supabase.auth.getUser();
+        if (user) {
+            const url = request.nextUrl.clone();
+
+            // This uses fetch because you can't use Prisma directly in middleware
+            // Middleware runs on edge, which is different from typical NodeJS environment
+            const {newestNoteId} = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/fetch-newest-note?userId=${user.id}`)
+                .then((res) => res.json());
+
+            if (newestNoteId) {
+                url.searchParams.set("noteId", newestNoteId);
+            } else {
+                const {noteId} = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/create-new-note?userId=${user.id}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                    .then((res) => res.json());
+                url.searchParams.set("noteId", noteId);
+            }
+
+            return NextResponse.redirect(url);
+        }
+    }
 
     // IMPORTANT: You *must* return the supabaseResponse object as it is.
     // If you're creating a new response object with NextResponse.next() make sure to:

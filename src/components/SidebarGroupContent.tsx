@@ -24,7 +24,9 @@ export default function SidebarGroupContent(props: SidebarGroupContentProps) {
         return new Fuse(localNotes, {keys: ["text"]});
     }, [localNotes]);
 
-    const filteredNotes = searchText ? fuse.search(searchText).map((result) => result.item) : localNotes;
+    const filteredNotes = useMemo(() => {
+        return searchText ? fuse.search(searchText).map((result) => result.item) : localNotes;
+    }, [searchText, fuse, localNotes]);
 
     const deleteNoteLocally = (noteId: string) => setLocalNotes((localNotes) => localNotes.filter((el: Note) => el.id !== noteId));
 

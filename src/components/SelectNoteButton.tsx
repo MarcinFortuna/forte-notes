@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {Note} from "@prisma/client";
 import {useSearchParams} from "next/navigation";
 import useNote from "@/hooks/useNote";
@@ -21,11 +21,10 @@ export default function SelectNoteButton(props: SelectNoteButtonProps) {
     const [shouldBeGlobalNoteText, setShouldBeGlobalNoteText] = useState<boolean>(false);
     const [localNoteText, setLocalNoteText] = useState<string>(note.text);
 
-    let noteText = localNoteText || blankNoteText;
-
-    if (shouldBeGlobalNoteText) {
-        noteText = selectedNoteText || blankNoteText;
-    }
+    const noteText = useMemo(() => {
+        if (shouldBeGlobalNoteText) return selectedNoteText || blankNoteText;
+        return localNoteText || blankNoteText;
+    }, [localNoteText, selectedNoteText, shouldBeGlobalNoteText]);
 
     useEffect(() => {
         setShouldBeGlobalNoteText(note.id === noteId);
@@ -42,7 +41,7 @@ export default function SelectNoteButton(props: SelectNoteButtonProps) {
                     {noteText}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                    {note.updatedAt.toLocaleDateString()}
+                    {note.updatedAt.toDateString()}
                 </p>
             </Link>
         </SidebarMenuButton>
